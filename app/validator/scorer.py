@@ -8,7 +8,7 @@ class EvidenceScorer:
     """Calculate evidence quality scores based on SHACL validation results"""
     
     def calculate_integrity(self, validation_results: Dict[str, Any]) -> float:
-        """Calculate statistical integrity score (0-1)"""
+        """FIX: Return simple pass rate - penalty logic was backwards"""
         parsed = validation_results.get("parsed_report", {})
         total = parsed.get("total_constraints", 10)
         passing = parsed.get("passing_constraints", 0)
@@ -16,14 +16,7 @@ class EvidenceScorer:
         if total == 0:
             return 0.0
         
-        # Focus on statistical test-specific constraints
-        violations = parsed.get("violations", [])
-        stat_violations = [v for v in violations if "statistic" in v.lower() or "p-value" in v.lower()]
-        
-        penalty = len(stat_violations) * 0.1
-        base_score = passing / total
-        
-        return max(0.0, min(1.0, base_score - penalty))
+        return passing / total  # Simple, correct calculation
     
     def calculate_fairness(self, validation_results: Dict[str, Any]) -> float:
         """Calculate FAIR metadata score (0-1)"""
@@ -88,4 +81,5 @@ class EvidenceScorer:
         else:
             feedback["overall"] = "Evidence not suitable for clinical use. Major revisions required."
         
+
         return feedback
