@@ -1,0 +1,96 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix stato: <http://purl.obolibrary.org/obo/stato.owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+# t-test Validation Rule
+stato:TTestShape
+    a sh:NodeShape ;
+    sh:targetClass stato:0000176 ;  # t-test
+    sh:property [
+        sh:path stato:has_dependent_variable ;
+        sh:datatype xsd:float ;
+        sh:message "t-test requires a numeric dependent variable." ;
+    ] ;
+    sh:property [
+        sh:path stato:has_independent_variable ;
+        sh:minCount 1 ;
+        sh:message "t-test requires at least one independent variable (two groups)." ;
+    ] ;
+    sh:property [
+        sh:path stato:has_p_value ;
+        sh:datatype xsd:float ;
+        sh:minInclusive 0.0 ;
+        sh:maxInclusive 1.0 ;
+        sh:message "p-value must be between 0 and 1." ;
+    ] .
+
+# Chi-Square Test Rule
+stato:ChiSquareShape
+    a sh:NodeShape ;
+    sh:targetClass stato:0000149 ;  # Chi-square
+    sh:property [
+        sh:path stato:has_dependent_variable ;
+        sh:datatype xsd:string ;
+        sh:message "Chi-square requires categorical dependent variables." ;
+    ] ;
+    sh:property [
+        sh:path stato:has_sample_size ;
+        sh:minInclusive 5 ;
+        sh:message "Chi-square test requires expected frequencies ≥5." ;
+    ] .
+
+# Logistic Regression Rule
+stato:LogisticRegressionShape
+    a sh:NodeShape ;
+    sh:targetClass stato:0000323 ;  # Logistic regression
+    sh:property [
+        sh:path stato:has_dependent_variable ;
+        sh:datatype xsd:boolean ;
+        sh:message "Logistic regression requires a binary outcome variable." ;
+    ] ;
+    sh:property [
+        sh:path stato:has_coefficient ;
+        sh:minCount 1 ;
+        sh:message "Logistic regression must report coefficients." ;
+    ] ;
+    sh:property [
+        sh:path stato:has_odds_ratio ;
+        sh:minCount 1 ;
+        sh:message "Logistic regression must include odds ratios." ;
+    ] .
+
+# Survival (Kaplan-Meier) Rule
+stato:SurvivalShape
+    a sh:NodeShape ;
+    sh:targetClass stato:0000424 ;  # Kaplan–Meier
+    sh:property [
+        sh:path stato:has_time_variable ;
+        sh:minCount 1 ;
+        sh:message "Kaplan–Meier requires time_to_event variable." ;
+    ] ;
+    sh:property [
+        sh:path stato:has_event_status ;
+        sh:datatype xsd:boolean ;
+        sh:message "Kaplan–Meier requires event status indicator (1/0)." ;
+    ] .
+
+# FAIR Metadata Rule
+stato:FAIRShape
+    a sh:NodeShape ;
+    sh:targetSubjectsOf stato:has_metadata ;
+    sh:property [
+        sh:path stato:has_license ;
+        sh:minCount 1 ;
+        sh:message "FAIR data must specify license information." ;
+    ] ;
+    sh:property [
+        sh:path stato:has_identifier ;
+        sh:pattern "^https?://" ;
+        sh:message "FAIR data must include a resolvable identifier (e.g., DOI or URL)." ;
+    ] ;
+    sh:property [
+        sh:path stato:has_version ;
+        sh:minCount 1 ;
+        sh:message "FAIR data must include version metadata." ;
+    ] .

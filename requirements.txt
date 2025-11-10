@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+python-multipart
+jinja2
+rdflib
+pyshacl
+fhir.resources
+pandas
+numpy
+scipy
+reportlab
+pydantic
+gunicorn

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCEV - Ontology-Driven Clinical Evidence Validator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b-2 border-blue-600">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">⚕</span>
+                    </div>
+                    <h1 class="text-2xl font-bold text-gray-900">OCEV</h1>
+                </div>
+                <nav class="flex space-x-6">
+                    <a href="#" class="text-gray-700 hover:text-blue-600 font-medium">Dashboard</a>
+                    <a href="#validator" class="text-gray-700 hover:text-blue-600 font-medium">Validator</a>
+                    <a href="#about" class="text-gray-700 hover:text-blue-600 font-medium">About</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Hero Section -->
+        <div class="bg-white rounded-lg shadow-md p-8 mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">
+                Ontology-Driven Clinical Evidence Validator
+            </h2>
+            <p class="text-gray-600 text-lg mb-6">
+                Validate statistical integrity, FAIRness, and FHIR compliance of clinical evidence 
+                using STATO ontology and SHACL reasoning.
+            </p>
+            <div class="flex flex-wrap gap-4">
+                <div class="flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-lg">
+                    <span class="text-blue-600 font-semibold">STATO</span>
+                    <span class="text-gray-600">Ontology</span>
+                </div>
+                <div class="flex items-center space-x-2 bg-green-50 px-4 py-2 rounded-lg">
+                    <span class="text-green-600 font-semibold">SHACL</span>
+                    <span class="text-gray-600">Validation</span>
+                </div>
+                <div class="flex items-center space-x-2 bg-purple-50 px-4 py-2 rounded-lg">
+                    <span class="text-purple-600 font-semibold">FHIR</span>
+                    <span class="text-gray-600">Compliance</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Validation Section -->
+        <section id="validator" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Panel: Input -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- CSV Upload -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Upload Clinical Data</h3>
+                    <form id="csvForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">CSV File</label>
+                            <input type="file" id="csvFile" accept=".csv" class="w-full border border-gray-300 rounded-lg p-3">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Evidence Type</label>
+                            <select id="evidenceType" class="w-full border border-gray-300 rounded-lg p-3">
+                                <option value="t-test">t-test (Two Groups, Continuous Outcome)</option>
+                                <option value="chi-square">Chi-Square (Categorical Variables)</option>
+                                <option value="logistic-regression">Logistic Regression (Binary Outcome)</option>
+                                <option value="kaplan-meier">Kaplan-Meier (Survival Analysis)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-200 font-semibold">
+                            Validate CSV
+                        </button>
+                    </form>
+                </div>
+
+                <!-- FHIR Upload -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Upload FHIR Evidence</h3>
+                    <form id="fhirForm" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">FHIR JSON File</label>
+                            <input type="file" id="fhirFile" accept=".json" class="w-full border border-gray-300 rounded-lg p-3">
+                        </div>
+                        <button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 transition duration-200 font-semibold">
+                            Validate FHIR
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Synthetic Data Generator -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Generate Synthetic Data</h3>
+                    <form id="syntheticForm" class="space-y-4">
+                        <div class="grid grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Sample Size</label>
+                                <input type="number" id="sampleSize" value="100" min="10" max="1000" class="w-full border border-gray-300 rounded-lg p-3">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Evidence Type</label>
+                                <select id="synthEvidenceType" class="w-full border border-gray-300 rounded-lg p-3">
+                                    <option value="t-test">t-test</option>
+                                    <option value="chi-square">Chi-Square</option>
+                                    <option value="logistic-regression">Logistic Regression</option>
+                                    <option value="kaplan-meier">Kaplan-Meier</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Random Seed (Optional)</label>
+                                <input type="number" id="seed" value="" placeholder="Auto" class="w-full border border-gray-300 rounded-lg p-3">
+                            </div>
+                        </div>
+                        <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition duration-200 font-semibold">
+                            Generate & Validate
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Results Panel -->
+                <div id="resultsPanel" class="bg-white rounded-lg shadow-md p-6 hidden">
+                    <h3 class="text-xl font-semibold text-gray-900 mb-4">Validation Results</h3>
+                    
+                    <!-- Score Gauges -->
+                    <div class="grid grid-cols-4 gap-4 mb-6">
+                        <div class="text-center">
+                            <canvas id="integrityGauge" width="120" height="120"></canvas>
+                            <p class="text-sm font-medium text-gray-700 mt-2">Integrity</p>
+                            <p class="text-lg font-bold" id="integrityScore">-</p>
+                        </div>
+                        <div class="text-center">
+                            <canvas id="fairnessGauge" width="120" height="120"></canvas>
+                            <p class="text-sm font-medium text-gray-700 mt-2">FAIRness</p>
+                            <p class="text-lg font-bold" id="fairnessScore">-</p>
+                        </div>
+                        <div class="text-center">
+                            <canvas id="fhirGauge" width="120" height="120"></canvas>
+                            <p class="text-sm font-medium text-gray-700 mt-2">FHIR</p>
+                            <p class="text-lg font-bold" id="fhirScore">-</p>
+                        </div>
+                        <div class="text-center">
+                            <canvas id="overallGauge" width="120" height="120"></canvas>
+                            <p class="text-sm font-medium text-gray-700 mt-2">Overall</p>
+                            <p class="text-lg font-bold" id="overallScore">-</p>
+                        </div>
+                    </div>
+
+                    <!-- Feedback Panel -->
+                    <div id="feedbackPanel" class="mb-6"></div>
+
+                    <!-- Actions -->
+                    <div class="flex flex-wrap gap-4">
+                        <button id="downloadPdf" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-200">
+                            📄 Download PDF
+                        </button>
+                        <button id="downloadJson" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">
+                            📊 Download JSON
+                        </button>
+                        <button id="downloadTtl" class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition duration-200">
+                            🦉 Download RDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Loading Indicator -->
+                <div id="loadingIndicator" class="hidden bg-white rounded-lg shadow-md p-8 text-center">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <p class="mt-4 text-gray-600">Validating evidence...</p>
+                </div>
+            </div>
+
+            <!-- Right Panel: Info -->
+            <div class="space-y-6">
+                <!-- Quick Stats -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">System Status</h3>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">STATO Ontology</span>
+                            <span class="text-green-600 font-semibold">✓ Loaded</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">SHACL Rules</span>
+                            <span class="text-green-600 font-semibold">✓ Active</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">FHIR Validator</span>
+                            <span class="text-green-600 font-semibold">✓ Ready</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Supported Tests -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Supported Tests</h3>
+                    <div class="space-y-2">
+                        <div class="flex items-center space-x-3 p-2 bg-blue-50 rounded">
+                            <span class="text-blue-600">📊</span>
+                            <span class="font-medium">t-test</span>
+                        </div>
+                        <div class="flex items-center space-x-3 p-2 bg-green-50 rounded">
+                            <span class="text-green-600">📈</span>
+                            <span class="font-medium">Chi-Square</span>
+                        </div>
+                        <div class="flex items-center space-x-3 p-2 bg-purple-50 rounded">
+                            <span class="text-purple-600">📉</span>
+                            <span class="font-medium">Logistic Regression</span>
+                        </div>
+                        <div class="flex items-center space-x-3 p-2 bg-orange-50 rounded">
+                            <span class="text-orange-600">⏱️</span>
+                            <span class="font-medium">Kaplan-Meier</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Example Data -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Example CSV Format</h3>
+                    <div class="bg-gray-100 p-3 rounded text-sm overflow-x-auto">
+                        <pre>patient_id,group,outcome
+1,treatment,85.2
+2,treatment,78.5
+3,control,62.1
+4,control,59.8
+...</pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t-2 border-gray-200 mt-16 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center text-gray-600">
+                <p>© 2024 Ontology-Driven Clinical Evidence Validator (OCEV)</p>
+                <p class="text-sm mt-2">Powered by STATO, SHACL, and FHIR</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
