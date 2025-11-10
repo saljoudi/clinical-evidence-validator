@@ -30,49 +30,33 @@ class FHIRValidator:
             scores.append(score)
         
         return sum(scores) / len(scores)
-    
+        
     def _validate_single_resource(self, resource: Dict[str, Any]) -> float:
-        """Validate a single FHIR Evidence resource"""
-        try:
-            # Try to create FHIR Evidence object
-            evidence = Evidence.parse_obj(resource)
-            
-            # Check required fields
-            score = 0.0
-            checks = 0
-            
-            if evidence.status:
-                score += 1.0
-            checks += 1
-            
-            if evidence.statisticalTest and len(evidence.statisticalTest) > 0:
-                score += 1.0
-            checks += 1
-            
-            if evidence.sampleSize and evidence.sampleSize.value:
-                score += 1.0
-            checks += 1
-            
-            if evidence.pValue and evidence.pValue.value is not None:
-                # Check p-value is valid
-                if 0 <= evidence.pValue.value <= 1:
-                    score += 1.0
-            checks += 1
-            
-            # Validate resource type
-            if evidence.resourceType == "Evidence":
-                score += 1.0
-            checks += 1
-            
-            return score / checks if checks > 0 else 0.0
-            
-        except pydantic.ValidationError as e:
-            print(f"FHIR validation error: {e}")
-            return 0.0
-        except Exception as e:
-            print(f"Unexpected error: {e}")
-            return 0.0
-    
+        """Simplified FHIR Evidence validation"""
+        score = 0
+        checks = 0
+        
+        # Must have resourceType
+        if resource.get("resourceType") == "Evidence":
+            score += 1
+        checks += 1
+        
+        # Must have status
+        if resource.get("status"):
+            score += 1
+        checks += 1
+        
+        # Must have statistical data
+        if resource.get("statistic") or resource.get("pValue"):
+            score += 1
+        checks += 1
+        
+        # Must have identifier/license
+        if resource.get("identifier") and resource.get("license"):
+            score += 1
+        checks += 1
+        
+        return score / checks    
     def validate_json_structure(self, json_data: str) -> Dict[str, Any]:
         """Validate JSON structure against FHIR schema"""
         try:
@@ -103,4 +87,5 @@ class FHIRValidator:
                 "valid": False,
                 "error": f"Invalid JSON: {str(e)}",
                 "results": []
+
             }
