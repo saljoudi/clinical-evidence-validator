@@ -58,35 +58,29 @@ class SyntheticDataGenerator:
             "resourceType": "Evidence",
             "id": str(uuid.uuid4()),
             "status": "draft",
-            "statisticalTest": {
-                "coding": [{
-                    "system": "http://purl.obolibrary.org/obo/stato.owl",
-                    "code": "t-test",
-                    "display": "Student's t-test"
-                }]
-            },
+            "description": f"t-test: t={t_stat:.3f}, p={p_value:.3f}",
             "statistic": [{
-                "type": "t-value",
-                "value": float(t_stat)
+                "numberOfParticipants": n_samples,
+                "valueNumber": float(t_stat),
+                "unitOfMeasure": {
+                    "coding": [{
+                        "system": "http://unitsofmeasure.org",
+                        "code": "t",
+                        "display": "t-statistic"
+                    }]
+                }
             }],
             "pValue": {
-                "value": float(p_value)
-            },
-            "variable": [
-                {"name": "treatment", "value": "treatment"},
-                {"name": "control", "value": "control"}
-            ],
-            "sampleSize": {
-                "value": n_samples
+                "value": float(p_value),
+                "unit": "p-value"
             },
             "license": "CC-BY-4.0",
             "identifier": [{
                 "system": "https://doi.org",
-                "value": f"https://doi.org/10.1234/syn.{uuid.uuid4()}"
+                "value": f"10.1234/syn.{uuid.uuid4()}"
             }],
             "version": "1.0.0"
-        }
-        
+        }        
         return df, [fhir_resource]
     
     def _generate_chisquare_data(self, n_samples: int) -> Tuple[pd.DataFrame, List[Dict]]:
@@ -290,4 +284,5 @@ class SyntheticDataGenerator:
             "license": "CC-BY-4.0",
             "identifier": [{"system": "https://doi.org", "value": f"https://doi.org/10.1234/csv.{uuid.uuid4()}"}],
             "version": "1.0"
+
         }]
